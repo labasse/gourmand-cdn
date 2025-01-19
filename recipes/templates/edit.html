@@ -1,0 +1,78 @@
+{% extends "appbase.html" %}
+{% load static %}
+
+{% block title %} - 
+  {% if recipe == None %}
+  Proposer une recette
+  {% else %}
+  {{ recipe.title }}
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+
+{% load widget_tweaks %}
+
+{% if ok %}
+  <div class="alert alert-success">Recette enregistrée !</div>
+{% elif ko %}
+  <div class="alert alert-danger">
+    <p>Erreur(s) de validation : </p>
+    <ul>
+    {% for field, errlist in form.errors.items %}
+      {% for err in errlist %}
+        <li>{{ err }}</li>
+      {% endfor %}
+    {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+<form class="col-12 py-3" enctype="multipart/form-data" method="post">
+  {% csrf_token %}
+  <div class="row">
+    <div class="col-4">
+      <table class="ingredients table table-hover">
+        <tr>
+          <th>Ingredient</th>
+          <th>Option</th>
+          <th>Suppr.</th>
+        </tr>
+      {{ ingredients.management_form }}
+      {% for form in ingredients %}
+      <tr {% if form.errors %}
+          class="table-danger"
+        {% elif form.is_valid and form.has_changed %}
+          class="table-success"
+        {% endif %}>
+        <td>
+          {{ form.hidden_fields|join:'' }}
+          {% render_field form.name class="form-control" %}
+        </td>
+        <td>{{ form.optional }}</td>
+        <td>{{ form.DELETE }}</td>
+      </tr>
+      {% endfor %}
+      </table>
+    </div>
+    <div class="col-8">
+      {% for field in form %}
+      <div class="mb-3">
+        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+          {% if field|widget_type in 'radioselect checkboxinput' %}
+          {{ field }}
+          {% else %}
+          {% render_field field|add_error_class:'is-invalid' class="form-control" %}
+          <div class="invalid-feedback">
+            {% for err in field.errors %}
+            {{ err }}
+            {% endfor %}
+          </div>
+          {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <input type="submit" class="btn btn-primary" value="Enregistrer">
+</form>
+
+{% endblock %}

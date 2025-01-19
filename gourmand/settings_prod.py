@@ -1,4 +1,4 @@
-import os, sys
+import os
 from .settings import *
 
 # Settings overrides
@@ -9,7 +9,7 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 CSRF_TRUSTED_ORIGINS = ['https://*.azurecontainerapps.io']
 
-DEBUG = True
+DEBUG = False
 DEBUG_PROPAGATE_EXCEPTIONS = True
 
 ALLOWED_HOSTS = ['.azurecontainerapps.io']
